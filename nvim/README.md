@@ -6,6 +6,43 @@ image shown in a split via [image.nvim](https://github.com/3rd/image.nvim)
 (Kitty graphics protocol). See the design note in
 [`../SCRATCH/nvim-client-plan.md`](../SCRATCH/nvim-client-plan.md).
 
+## Requirements
+
+The plugin core (socket server, protocol, SVG generation) is pure Lua +
+`vim.uv` and needs **no external deps**. Everything below is only for
+rasterizing the SVG and painting it in the terminal.
+
+| Layer | Dependency | Notes |
+| --- | --- | --- |
+| Editor | Neovim >= 0.10 | uses `vim.system`, `vim.uv` |
+| R side | `jgd` R package only | no R changes; zero-dep by design |
+| Rasterize | `rsvg-convert` (librsvg) *or* `resvg` | SVG -> PNG (`brew install librsvg`) |
+| Display | `image.nvim` + ImageMagick CLI | `magick_cli` processor (no luarocks); `brew install imagemagick` |
+| Display | a graphics-capable terminal | see matrix below |
+
+macOS one-liner for the non-Lua deps: `brew install librsvg imagemagick`.
+
+### Terminal emulator support
+
+The viewer needs a terminal that speaks one of image.nvim's backends
+(Kitty graphics protocol, Sixel, or — Linux/X11 — Ueberzug):
+
+| Terminal | Works | Backend | Extra |
+| --- | --- | --- | --- |
+| Ghostty, Kitty | best | `kitty` | none |
+| WezTerm | partial | `kitty`/`sixel` | not officially supported by image.nvim |
+| iTerm2 | via sixel | `sixel` | ImageMagick w/ sixel |
+| foot (Wayland) | yes | `sixel` | — |
+| any Linux/X11 term | yes | `ueberzug` | `ueberzugpp` binary |
+| Terminal.app, Alacritty, VS Code term | no | — | no graphics protocol |
+
+Inside **tmux/zellij**: tmux >= 3.3 with `set -g allow-passthrough on`
+(plus `visual-activity off`, `focus-events on`). Not needed outside a
+multiplexer.
+
+Note: `:JgdSave` export needs only `rsvg-convert` (no image.nvim/terminal);
+the headless tests need only R + `rsvg-convert`.
+
 ## Layout
 
 ```
