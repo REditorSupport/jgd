@@ -72,5 +72,23 @@ real `~/.config/nvim` or `~/.local/share/nvim`.
 | `h` / `<Left>`  | previous plot |
 | `l` / `<Right>` | next plot |
 | `d` / `x`       | delete current plot |
+| `w`             | save/export plot (prompts for path) |
 | `q`             | close viewer |
 | `r`             | refresh / re-fit |
+
+## Saving plots
+
+`:JgdSave` (or `w` in the viewer) exports the current plot, matching the
+VS Code jgd extension's defaults and behavior:
+
+- Prompts for **`W x H inches @ DPI`** (default **`7 x 7 @ 150`**), then a path
+  (default `cwd/plot.png`). Format is inferred from the extension: `.svg`
+  writes vector, anything else rasterizes to PNG via rsvg-convert.
+- The plot is scaled to **fit** the `W x H @ DPI` box preserving its current
+  aspect (e.g. a 768x576 plot at 7x7@150 exports as 1050x788).
+- Scriptable: `:JgdSave path.png` (uses defaults) or
+  `:JgdSave path.svg 5 x 4 @ 300`.
+
+Defaults are configurable via `require("jgd").setup{ export_width=7,
+export_height=7, export_dpi=150 }` (mirrors VS Code's
+`plot.jgd.exportWidth`/`exportHeight`/`exportDpi`).

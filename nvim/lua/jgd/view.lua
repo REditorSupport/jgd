@@ -76,6 +76,7 @@ local function ensure_window()
   map("<Right>", "JgdNext", "jgd: next plot")
   map("d", "JgdDelete", "jgd: delete plot")
   map("x", "JgdDelete", "jgd: delete plot")
+  map("w", "JgdSave", "jgd: save/export plot")
   map("q", "JgdClose", "jgd: close viewer")
   map("r", "JgdRefresh", "jgd: refresh")
 

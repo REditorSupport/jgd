@@ -121,7 +121,9 @@ end
 
 --- Render a plot (`{ops=..., device=...}`) to an SVG string.
 --- font_scale multiplies text size (on top of the dpi/72 device scaling).
-function M.ops_to_svg(plot, font_scale)
+--- out_w/out_h set the <svg> width/height (viewBox stays at device size, so
+--- the content scales aspect-correctly); default to the device size.
+function M.ops_to_svg(plot, font_scale, out_w, out_h)
   local dev = plot.device or {}
   local w = (num(dev.width) ~= 0) and dev.width or 768
   local h = (num(dev.height) ~= 0) and dev.height or 576
@@ -178,11 +180,13 @@ function M.ops_to_svg(plot, font_scale)
   end
   if clip_open then body[#body + 1] = "</g>" end
 
+  local ow = out_w or w
+  local oh = out_h or h
   return string.format(
     '<?xml version="1.0" encoding="UTF-8"?>\n'
       .. '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" '
       .. 'width="%s" height="%s" viewBox="0 0 %s %s"><defs>%s</defs>%s</svg>',
-    w, h, w, h, table.concat(defs), table.concat(body))
+    ow, oh, w, h, table.concat(defs), table.concat(body))
 end
 
 return M
