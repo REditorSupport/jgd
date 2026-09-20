@@ -13,8 +13,8 @@ specification.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/grantmcdermott/jgd}
-  \item Report bugs at \url{https://github.com/grantmcdermott/jgd/issues}
+  \item \url{https://github.com/REditorSupport/jgd}
+  \item Report bugs at \url{https://github.com/REditorSupport/jgd/issues}
 }
 
 }

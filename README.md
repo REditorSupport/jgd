@@ -3,10 +3,10 @@
 <!-- badges: start -->
 
 <a href="https://CRAN.R-project.org/package=jgd"><img src="https://www.r-pkg.org/badges/version/jgd" class="img-fluid" alt="CRAN version"></a>
-<a href="https://grantmcdermott.r-universe.dev"><img src="https://grantmcdermott.r-universe.dev/badges/jgd" class="img-fluid" alt="R-universe version"></a>
+<a href="https://reditorsupport.r-universe.dev"><img src="https://reditorsupport.r-universe.dev/badges/jgd" class="img-fluid" alt="R-universe version"></a>
 <a href="https://CRAN.R-project.org/package=jgd"><img src="https://tinyverse.netlify.app/badge/jgd" class="img-fluid" alt="Dependencies"></a>
-<a href="https://github.com/grantmcdermott/jgd/actions/workflows/r-pkg-check.yaml"><img src="https://github.com/grantmcdermott/jgd/actions/workflows/r-pkg-check.yaml/badge.svg" class="img-fluid" alt="R CMD check"></a>
-<a href="https://github.com/grantmcdermott/jgd/blob/main/r-pkg/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue" class="img-fluid" alt="License"></a>
+<a href="https://github.com/REditorSupport/jgd/actions/workflows/r-pkg-check.yaml"><img src="https://github.com/REditorSupport/jgd/actions/workflows/r-pkg-check.yaml/badge.svg" class="img-fluid" alt="R CMD check"></a>
+<a href="https://github.com/REditorSupport/jgd/blob/main/r-pkg/LICENSE.md"><img src="https://img.shields.io/badge/license-MIT-blue" class="img-fluid" alt="License"></a>
 
 <!-- badges: end -->
 
@@ -40,7 +40,7 @@ install.packages('jgd')
 Or, grab the development version from R-universe:
 
 ```r
-install.packages('jgd', repos = 'https://grantmcdermott.r-universe.dev')
+install.packages('jgd', repos = 'https://reditorsupport.r-universe.dev')
 ```
 
 ### Display frontend
@@ -100,16 +100,16 @@ then run directly (dependencies are fetched automatically):
 
 ```bash
 # macOS / Linux
-deno run --allow-net --allow-read --allow-write --allow-env https://raw.githubusercontent.com/grantmcdermott/jgd/refs/heads/main/server/main.ts
+deno run --allow-net --allow-read --allow-write --allow-env https://raw.githubusercontent.com/REditorSupport/jgd/refs/heads/main/server/main.ts
 
 # Windows
-deno run -A https://raw.githubusercontent.com/grantmcdermott/jgd/refs/heads/main/server/main.ts
+deno run -A https://raw.githubusercontent.com/REditorSupport/jgd/refs/heads/main/server/main.ts
 ```
 
 Or, clone the repo and run locally:
 
 ```bash
-# git clone https://github.com/grantmcdermott/jgd.git ## clone first
+# git clone https://github.com/REditorSupport/jgd.git ## clone first
 cd server && deno task start && cd ..
 ```
 
@@ -123,7 +123,7 @@ cd server && deno task start && cd ..
 > `--tcp 8888`) to connect over localhost TCP rather than a named pipe:
 >
 > ```bash
-> deno run --allow-net --allow-read --allow-write --allow-env https://raw.githubusercontent.com/grantmcdermott/jgd/refs/heads/main/server/main.ts --tcp 8888
+> deno run --allow-net --allow-read --allow-write --allow-env https://raw.githubusercontent.com/REditorSupport/jgd/refs/heads/main/server/main.ts --tcp 8888
 > ```
 
 Once the Deno server is running, open `http://127.0.0.1:<port>/`
@@ -324,7 +324,7 @@ receivers should ignore unknown fields and message types.
 For the complete specification — including message schemas, the resize protocol,
 multi-session routing, and implementation guidance — see `?jgd_spec` in R or
 browse the source at
-[`r-pkg/R/spec.R`](https://github.com/grantmcdermott/jgd/blob/main/r-pkg/R/spec.R).
+[`r-pkg/R/spec.R`](https://github.com/REditorSupport/jgd/blob/main/r-pkg/R/spec.R).
 
 ## What's supported
 

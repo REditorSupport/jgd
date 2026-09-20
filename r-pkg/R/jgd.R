@@ -21,12 +21,12 @@
 #'   (<https://github.com/REditorSupport/vscode-R>), which handles device
 #'   activation for you.
 #' - **Deno server.** A standalone browser-based renderer, available from the
-#'   project repository: <https://github.com/grantmcdermott/jgd>.
+#'   project repository: <https://github.com/REditorSupport/jgd>.
 #'
 #' Users aren't limited to these two options. The `jgd` protocol is deliberately
 #' frontend-agnostic; you can render plots with any client that reads JSONL
 #' (JSON Lines). Again, please see the project repository for full documentation:
-#' <https://github.com/grantmcdermott/jgd>
+#' <https://github.com/REditorSupport/jgd>
 #' 
 #' @section Debugging:
 #' Set `options(jgd.debug = TRUE)` before opening the device to enable
