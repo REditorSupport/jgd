@@ -37,13 +37,13 @@ appropriate frontend. Two official renderers are available:
 (\url{https://github.com/REditorSupport/vscode-R}), which handles device
 activation for you.
 \item \strong{Deno server.} A standalone browser-based renderer, available from the
-project repository: \url{https://github.com/grantmcdermott/jgd}.
+project repository: \url{https://github.com/REditorSupport/jgd}.
 }
 
 Users aren't limited to these two options. The \code{jgd} protocol is deliberately
 frontend-agnostic; you can render plots with any client that reads JSONL
 (JSON Lines). Again, please see the project repository for full documentation:
-\url{https://github.com/grantmcdermott/jgd}
+\url{https://github.com/REditorSupport/jgd}
 }
 
 \section{Debugging}{

@@ -1,6 +1,6 @@
 Package: jgd
 Title: JSON Graphics Device
-Version: 0.1.1
+Version: 0.1.1.99
 Authors@R: c(
         person("Grant", "McDermott", role = c("aut", "cre"),
             email = "contact@grantmcdermott.com"),
@@ -29,7 +29,7 @@ Suggests:
     processx,
     testthat (>= 3.0.0),
     withr
-URL: https://github.com/grantmcdermott/jgd
-BugReports: https://github.com/grantmcdermott/jgd/issues
+URL: https://github.com/REditorSupport/jgd
+BugReports: https://github.com/REditorSupport/jgd/issues
 Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
