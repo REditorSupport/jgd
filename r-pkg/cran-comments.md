@@ -1,22 +1,24 @@
 ## Submission notes
 
-This is a patch release (0.1.0 -> 0.1.1). It contains internal bug fixes
-and documentation updates only; there are no user-facing API changes.
+This is a minor release (0.1.1 -> 0.2.0) that updates package metadata
+only; there are no code or user-facing API changes.
 
-- Fixed the unprotected-variable (`[UP]`) warnings reported for jgd 0.1.0
-  by the CRAN `rchk` checks
-  (<https://raw.githubusercontent.com/kalibera/cran-checks/master/rchk/results/jgd.out>).
-  `PROTECT`/`UNPROTECT` handling has been tightened around allocating calls
-  in `replay_snapshot` (`src/device.c`) and `C_jgd_discover`
-  (`src/transport.c`).
-- Documentation updates noting that the package's VS Code support is now
-  provided by the upstream VS Code R extension.
+- The project repository has moved from `grantmcdermott/jgd` to the
+  `REditorSupport` GitHub organization, which also maintains the VS Code R
+  extension that now ships native `jgd` support. The `URL` and `BugReports`
+  fields, and the repository links in the documentation, have been updated
+  to point to the new canonical location
+  (<https://github.com/REditorSupport/jgd>). The maintainer is unchanged.
+- Although GitHub currently redirects the old URLs, we would prefer the CRAN
+  metadata to reference the canonical repository rather than rely on
+  redirects indefinitely.
 
 ## Test environments
 
-- macOS (aarch64), R 4.6.1
-- Win Builder (x86_64), R 4.6.1
-- GitHub Actions: Ubuntu (R-devel, R 4.6.1), Windows (R 4.6.1), macOS (R-release)
+- Arch Linux (x86_64), R 4.6.1
+- Win Builder (x86_64), R-devel / R-release
+- GitHub Actions: Ubuntu (R-devel, R-release), Windows (R-release),
+  macOS (R-release)
 
 ## R CMD check results
 
