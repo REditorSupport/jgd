@@ -53,26 +53,24 @@ preferred method.
 
 _**Update (2026-06-30):** Our `jgd` VS Code extension has been
 [absorbed](https://github.com/REditorSupport/vscode-R/pull/1706) into the main
-VS Code R extension. We have adapted the instructions below accordingly._
+vscode-R extension. We have adapted the instructions below accordingly._
 
-The official VS Code [R extension](https://github.com/REditorSupport/vscode-R)
-provides native support for **jgd** as part of its major v3.0.0 updates.
-At the time of writing, this requires installing the release candidate version
-from GitHub:
+The official [vscode-R extension](https://github.com/REditorSupport/vscode-R)
+provides native support for **jgd** as part of its major v3.0.0 updates. Please
+ensure that you install / update to the latest version:
 
-```bash
-curl -fsSL \
-  https://github.com/REditorSupport/vscode-R/releases/download/latest/vscode-R.vsix \
-  -o vscode-R.vsix
-code --install-extension vscode-R.vsix
+```sh
+code --install-extension REditorSupport.r
 ```
 
-Once the 3.0.0-rc version of the extension has been installed, you will also
-be prompted to install the `sess` R package. Just say "yes", or install it
-manually:
+
+Once v3.0.0 of the vscode-R extension has been installed, you may also be
+prompted to install the `languageserver` and `sess` R packages. Just say "yes"
+when prompted by the extension, or install them manually:
 
 ```bash
-Rscript -e 'remotes::install_github("REditorSupport/vscode-R/sess")'
+Rscript -e "install.packages('languageserver')"
+Rscript -e "install.packages('sess', repos = c('https://reditorsupport.r-universe.dev', getOption('repos')))"
 ```
 
 Provided that you have also installed **jgd** (above), everything should work
@@ -81,8 +79,8 @@ any (conflicting) legacy R plot setting configurations. Open your VS Code
 settings (`Cmd + ,` / `Ctrl + ,`) and check the following entries:
 
 ```
-r.plot.backend: "auto"
-r.plot.useHttpgd: "false"
+r.plot.backend: "auto"       // or "jgd"
+// r.plot.useHttpgd: "false" // deprecated setting, but worth turning off explicitly
 ```
 
 Test it out by executing some R plotting commands like the example script
