@@ -6,10 +6,10 @@ No user-facing changes.
 
 - The `jgd` repo has been [migrated](https://github.com/REditorSupport/jgd) to
   the `REditorSupport` GitHub organization. The maintainers remain the same, but
-  issue and R-universe documentation links have been updated accordingly. The
+  the package URL and bug-report links have been updated accordingly. The
   migration reflects our tight integration with the (just released) v3.0.0
-  version of the vscode-R extension. We emphasize that `jgd` remains frontend,
-  agnostic and encourage integration with other IDEs and R frontends.
+  version of the vscode-R extension. We emphasize that `jgd` remains
+  frontend-agnostic and encourage integration with other IDEs and R frontends.
 
 # jgd 0.1.1
 
