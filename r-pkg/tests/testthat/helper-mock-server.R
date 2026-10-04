@@ -11,25 +11,60 @@
 # 3. Responds to metrics_request messages with approximate values
 # 4. Collects all received JSON messages
 # 5. Returns collected messages when the device sends "close"
+#
+# These subprocess/socket integration tests run in CI, but are skipped on CRAN.
 
-start_mock_server_local = function(send_welcome = FALSE, transport = "unix") {
+# Shared by both transports: wait() does not terminate a process on timeout.
+collect_mock_server = function(bg, timeout, name = "Mock server") {
+  bg$wait(timeout)
+  if (bg$is_alive()) {
+    bg$kill()
+    stop(name, " timed out after ", timeout,
+         " ms waiting for completion; background process terminated")
+  }
+
+  status = bg$get_exit_status()
+  read_error = function() {
+    # kill() can close stderr; preserve the exit-status error in that case.
+    tryCatch(bg$read_error(), error = function(e) "stderr unavailable")
+  }
+  if (is.null(status) || is.na(status)) {
+    stop(name, " exited with unknown exit status: ", read_error())
+  }
+  if (status != 0) {
+    stop(name, " exited with error (status ", status, "): ", read_error())
+  }
+  bg$get_result()
+}
+
+start_mock_server_local = function(
+  send_welcome = FALSE,
+  transport = "unix",
+  envir = parent.frame()
+) {
+  skip_on_cran()
   skip_if_not_installed("callr")
   skip_if_not_installed("processx")
   skip_if_not_installed("jsonlite")
 
   is_windows = (.Platform$OS.type == "windows")
+  # Keep paths until the caller finishes, rather than until this helper returns.
+  ready_file = withr::local_tempfile(
+    pattern = "jgd-test-ready-", fileext = ".txt", .local_envir = envir
+  )
 
   if (is_windows) {
     # Windows: named pipe via processx
     pipe_name = sprintf("jgd-test-%d-%s", Sys.getpid(),
-                        basename(tempfile()))
+                        basename(ready_file))
     # processx expects \\?\pipe\NAME (extended-length path prefix);
     # the C client uses \\.\pipe\NAME (device namespace) — both resolve
     # to the same kernel pipe object
     win_path = paste0("\\\\?\\pipe\\", pipe_name)
-    ready_file = tempfile(pattern = "jgd-test-ready-", fileext = ".txt")
   } else {
     socket_path = tempfile(pattern = "jgd-test-", fileext = ".sock")
+    # local_tempfile() uses recursive unlink, which does not remove Unix sockets.
+    withr::defer(unlink(socket_path), envir = envir)
   }
 
   bg = callr::r_bg(
@@ -37,11 +72,9 @@ start_mock_server_local = function(send_welcome = FALSE, transport = "unix") {
       `%||%` = function(x, y) if (is.null(x)) y else x
       server = processx::conn_create_unix_socket(conn_path)
 
-      # Signal readiness: on Windows write a ready file (pipe has no filesystem
-      # presence); on Unix the socket file itself signals readiness
-      if (!is.null(ready_file)) {
-        writeLines("ready", ready_file)
-      }
+      # Signal readiness only after socket creation (including listen) returns.
+      # The Unix socket path can appear before the server is listening.
+      writeLines("ready", ready_file)
 
       # Wait for client connection (30s timeout)
       # poll() returns "connect" (not "ready") for new connections on a
@@ -124,34 +157,27 @@ start_mock_server_local = function(send_welcome = FALSE, transport = "unix") {
     },
     args = list(
       conn_path = if (is_windows) win_path else socket_path,
-      ready_file = if (is_windows) ready_file else NULL,
+      ready_file = ready_file,
       send_welcome = send_welcome,
       transport = transport
     ),
     supervise = TRUE
   )
 
+  # Both Unix sockets and Windows named pipes use an explicit readiness signal.
+  for (i in seq_len(30)) {
+    if (file.exists(ready_file)) break
+    Sys.sleep(0.1)
+  }
+  if (!file.exists(ready_file)) {
+    bg$kill()
+    unlink(ready_file)
+    if (!is_windows) unlink(socket_path)
+    skip("Mock server not ready in time")
+  }
   if (is_windows) {
-    # Wait for the ready file to appear (pipe has no filesystem presence)
-    for (i in seq_len(30)) {
-      if (file.exists(ready_file)) break
-      Sys.sleep(0.1)
-    }
-    if (!file.exists(ready_file)) {
-      bg$kill()
-      skip("Mock server pipe not ready in time")
-    }
     client_uri = paste0("npipe:////./pipe/", pipe_name)
   } else {
-    # Wait for the socket file to appear
-    for (i in seq_len(30)) {
-      if (file.exists(socket_path)) break
-      Sys.sleep(0.1)
-    }
-    if (!file.exists(socket_path)) {
-      bg$kill()
-      skip("Mock server socket not created in time")
-    }
     client_uri = socket_path
   }
 
@@ -159,11 +185,7 @@ start_mock_server_local = function(send_welcome = FALSE, transport = "unix") {
     bg = bg,
     socket_path = client_uri,
     collect = function(timeout = 10000) {
-      bg$wait(timeout)
-      if (bg$get_exit_status() != 0) {
-        stop("Mock server exited with error: ", bg$read_error())
-      }
-      bg$get_result()
+      collect_mock_server(bg, timeout)
     },
     cleanup = function() {
       if (bg$is_alive()) {
@@ -171,19 +193,25 @@ start_mock_server_local = function(send_welcome = FALSE, transport = "unix") {
       }
       if (!is_windows) {
         unlink(socket_path)
-      } else {
-        unlink(ready_file)
       }
+      unlink(ready_file)
     }
   )
 }
 
 # TCP mock server using base R sockets (works on all platforms including Windows)
-start_mock_server_tcp = function(send_welcome = FALSE, transport = "tcp") {
+start_mock_server_tcp = function(
+  send_welcome = FALSE,
+  transport = "tcp",
+  envir = parent.frame()
+) {
+  skip_on_cran()
   skip_if_not_installed("callr")
   skip_if_not_installed("jsonlite")
 
-  port_file = tempfile(pattern = "jgd-tcp-port-", fileext = ".txt")
+  port_file = withr::local_tempfile(
+    pattern = "jgd-tcp-port-", fileext = ".txt", .local_envir = envir
+  )
 
   bg = callr::r_bg(
     function(port_file, send_welcome, transport) {
@@ -295,11 +323,7 @@ start_mock_server_tcp = function(send_welcome = FALSE, transport = "tcp") {
     port = port,
     socket_url = sprintf("tcp://127.0.0.1:%d", port),
     collect = function(timeout = 10000) {
-      bg$wait(timeout)
-      if (bg$get_exit_status() != 0) {
-        stop("Mock TCP server exited with error: ", bg$read_error())
-      }
-      bg$get_result()
+      collect_mock_server(bg, timeout, "Mock TCP server")
     },
     cleanup = function() {
       if (bg$is_alive()) {
