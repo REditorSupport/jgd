@@ -72,6 +72,10 @@ start_mock_server_local = function(
       `%||%` = function(x, y) if (is.null(x)) y else x
       server = processx::conn_create_unix_socket(conn_path)
 
+      # On Windows the first poll starts ConnectNamedPipe. Arm it before a
+      # fast client can connect and close, leaving an unaccepted closed pipe.
+      processx::poll(list(server), 0)
+
       # Signal readiness only after socket creation (including listen) returns.
       # The Unix socket path can appear before the server is listening.
       writeLines("ready", ready_file)

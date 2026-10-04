@@ -63,20 +63,21 @@ test_that("collection reports a terminated subprocess for both transports", {
   })
 })
 
-test_that("local readiness waits for socket creation to return", {
+test_that("local readiness waits for socket creation and connection polling", {
   skip_on_cran()
   skip_if_not_installed("callr")
   skip_if_not_installed("processx")
   skip_if_not_installed("jsonlite")
 
   returned_file = withr::local_tempfile()
+  polled_file = withr::local_tempfile()
   files = new.env(parent = emptyenv())
   r_bg = callr::r_bg
   local_mocked_bindings(
     r_bg = function(func, args, ...) {
       files$ready = args$ready_file
       r_bg(
-        function(func, args, returned_file) {
+        function(func, args, returned_file, polled_file) {
           create_socket = processx::conn_create_unix_socket
           # Delay the constructor after the socket/pipe exists. The parent must
           # still wait until the constructor returns and publishes readiness.
@@ -90,9 +91,25 @@ test_that("local readiness waits for socket creation to return", {
             },
             ns = "processx"
           )
+          poll_connections = processx::poll
+          assignInNamespace(
+            "poll",
+            function(processes, ms) {
+              # Let the client connect and close before the blocking poll.
+              # Windows must already have a pending ConnectNamedPipe request.
+              if (ms == 30000) Sys.sleep(0.5)
+              result = poll_connections(processes, ms)
+              if (ms == 0) writeLines("polled", polled_file)
+              result
+            },
+            ns = "processx"
+          )
           do.call(func, args)
         },
-        args = list(func = func, args = args, returned_file = returned_file),
+        args = list(
+          func = func, args = args,
+          returned_file = returned_file, polled_file = polled_file
+        ),
         ...
       )
     },
@@ -103,6 +120,7 @@ test_that("local readiness waits for socket creation to return", {
     server = start_mock_server_local()
     withr::defer(if (server$bg$is_alive()) server$bg$kill())
     expect_true(file.exists(returned_file))
+    expect_true(file.exists(polled_file))
     expect_true(file.exists(files$ready))
 
     jgd(socket = server$socket_path)
