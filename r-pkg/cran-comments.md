@@ -1,8 +1,8 @@
 ## Submission notes
 
-This is a patch release (0.2.0 -> 0.2.1) that fixes an ancillary race
-condition identified in CRAN's MKL check for our mock server test. There
-are no user-facing changes.
+This is a patch release (0.2.0 -> 0.2.1) that fixes the MKL check error
+reported by CRAN, caused by a race condition in our mock server tests.
+There are no user-facing changes.
 
 ## Test environments
 

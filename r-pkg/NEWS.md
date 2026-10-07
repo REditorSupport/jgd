@@ -4,8 +4,8 @@ No user-facing changes.
 
 ## Internals
 
-- Fix CRAN (MKL) check warning due potential race condition in the mock server
-  test. (#76)
+- Fixed a CRAN (MKL) check error caused by a race condition in the mock
+  server tests. (#76)
 
 # jgd 0.2.0
 
