@@ -1,6 +1,6 @@
 ## Submission notes
 
-This is a path release (0.2.0 -> 0.2.1) that fixes an ancillary race
+This is a patch release (0.2.0 -> 0.2.1) that fixes an ancillary race
 condition identified in CRAN's MKL check for our mock server test. There
 are no user-facing changes.
 
