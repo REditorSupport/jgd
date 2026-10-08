@@ -1,17 +1,8 @@
 ## Submission notes
 
-This is a minor release (0.1.1 -> 0.2.0) that updates package metadata
-only; there are no code or user-facing API changes.
-
-- The project repository has moved from `grantmcdermott/jgd` to the
-  `REditorSupport` GitHub organization, which also maintains the VS Code R
-  extension that now ships native `jgd` support. The `URL` and `BugReports`
-  fields, and the repository links in the documentation, have been updated
-  to point to the new canonical location
-  (<https://github.com/REditorSupport/jgd>). The maintainer is unchanged.
-- Although GitHub currently redirects the old URLs, we would prefer the CRAN
-  metadata to reference the canonical repository rather than rely on
-  redirects indefinitely.
+This is a patch release (0.2.0 -> 0.2.1) that fixes the MKL check error
+reported by CRAN, caused by a race condition in our mock server tests.
+There are no user-facing changes.
 
 ## Test environments
 

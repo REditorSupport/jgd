@@ -1,3 +1,12 @@
+# jgd 0.2.1
+
+No user-facing changes.
+
+## Internals
+
+- Fixed a CRAN (MKL) check error caused by a race condition in the mock
+  server tests. (#76)
+
 # jgd 0.2.0
 
 No user-facing changes.
